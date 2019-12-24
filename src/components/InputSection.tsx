@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
 import cs from "classnames";
 
-import { EInputType } from "../store";
+import { EInputType, TData, useStore } from "../store";
 
-const STRUCTURE = [7, 8, 9, "+", 4, 5, 6, "*", 1, 2, 3, "=", 0, "00", ",", "del"];
+const STRUCTURE = [7, 8, 9, "+", 4, 5, 6, "*", 1, 2, 3, "=", 0, "00", ".", "C"];
 
 function InputSection() {
+  const { setData } = useStore();
   const [typeInput, setTypeInput] = useState<EInputType>(EInputType.default);
   const classNameBtn = useCallback(
     (rule: EInputType) => {
@@ -20,6 +21,36 @@ function InputSection() {
     return () => {
       if (type === typeInput) setTypeInput(EInputType.default);
       else setTypeInput(type);
+    };
+  }
+
+  function onClickNumber(code: string) {
+    return () => {
+      if (code === "=") {
+        setData((prevData: TData) => {
+          const copyData = [...prevData];
+          const removeComma = copyData.map(val => val.replace(/,/gi, ""));
+          const calc = eval(removeComma.join("")).toLocaleString(); // eslint-disable-line no-eval
+
+          return [calc];
+        });
+      } else if (code === "C") {
+        setData((prevData: TData) => {
+          const copyData = [...prevData];
+          copyData.pop();
+
+          return copyData;
+        });
+      } else {
+        setData((prevData: TData) => {
+          const copyData = [...prevData];
+          if (prevData.length === 1 && prevData[0] === "0") {
+            copyData.pop();
+          }
+
+          return [...copyData, code];
+        });
+      }
     };
   }
 
@@ -45,9 +76,13 @@ function InputSection() {
           Fibonacci
         </div>
       </button>
-      {STRUCTURE.map((no, i) => (
-        <button key={i} className="w-1/4 p-2 flex items-center justify-center">
-          <div className="text-white text-center text-lg font-bold">{no}</div>
+      {STRUCTURE.map((code, i) => (
+        <button
+          key={i}
+          onClick={onClickNumber(code.toString())}
+          className="w-1/4 p-2 flex items-center justify-center"
+        >
+          <div className="text-white text-center text-lg font-bold">{code}</div>
         </button>
       ))}
     </section>
