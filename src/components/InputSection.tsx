@@ -19,9 +19,21 @@ function InputSection() {
 
   function onClickBtn(type: EInputType) {
     return () => {
+      setData([]);
+
       if (type === typeInput) setTypeInput(EInputType.default);
       else setTypeInput(type);
     };
+  }
+
+  function calculate(str: string) {
+    try {
+      str = eval(str); // eslint-disable-line no-eval
+    } catch (e) {
+      console.log(e);
+    }
+
+    return str;
   }
 
   function onClickNumber(code: string) {
@@ -30,7 +42,7 @@ function InputSection() {
         setData((prevData: TData) => {
           const copyData = [...prevData];
           const removeComma = copyData.map(val => val.replace(/,/gi, ""));
-          const calc = eval(removeComma.join("")).toLocaleString(); // eslint-disable-line no-eval
+          const calc = calculate(removeComma.join("")).toLocaleString();
 
           return [calc];
         });
@@ -63,7 +75,7 @@ function InputSection() {
         <div className="text-white text-center font-bold text-xs">
           Generate
           <br />
-          Prime
+          Prime Number
         </div>
       </button>
       <button
@@ -73,7 +85,7 @@ function InputSection() {
         <div className="text-white text-center font-bold text-xs">
           Generate
           <br />
-          Fibonacci
+          Fibonacci Number
         </div>
       </button>
       {STRUCTURE.map((code, i) => (
