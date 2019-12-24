@@ -8354,6 +8354,11 @@ video {
   padding-bottom: 50%;
 }
 
+*:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;

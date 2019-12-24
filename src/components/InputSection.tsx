@@ -6,8 +6,18 @@ import { EInputType, TData, useStore } from "../store";
 const STRUCTURE = [7, 8, 9, "+", 4, 5, 6, "*", 1, 2, 3, "=", 0, "00", ".", "C"];
 
 function InputSection() {
-  const { setData } = useStore();
+  const { setData, data } = useStore();
   const [typeInput, setTypeInput] = useState<EInputType>(EInputType.default);
+  const disabledBtn = useCallback(
+    code => {
+      if (typeInput === EInputType.fibonacci || typeInput === EInputType.prime) {
+        if (code === "*" || code === "+" || code === ".") return true;
+      }
+
+      return false;
+    },
+    [typeInput]
+  );
   const classNameBtn = useCallback(
     (rule: EInputType) => {
       return cs("w-1/2 p-2 flex items-center justify-center", {
@@ -33,27 +43,20 @@ function InputSection() {
       console.log(e);
     }
 
-    return str;
+    return str || "";
   }
 
   function onClickNumber(code: string) {
     return () => {
       if (code === "=") {
-        setData((prevData: TData) => {
-          const copyData = [...prevData];
-          const removeComma = copyData.map(val => val.replace(/,/gi, ""));
-          const calc = calculate(removeComma.join("")).toLocaleString();
+        const copyData = [...data];
+        const removeComma = copyData.map(val => val.replace(/,/gi, ""));
+        const result = calculate(removeComma.join(""));
 
-          return [calc];
-        });
-      } else if (code === "C") {
-        setData((prevData: TData) => {
-          const copyData = [...prevData];
-          copyData.pop();
-
-          return copyData;
-        });
-      } else {
+        if (typeInput === EInputType.prime) generatePrimeNumer(parseInt(result));
+        else setData([result.toLocaleString()]);
+      } else if (code === "C") setData([]);
+      else {
         setData((prevData: TData) => {
           const copyData = [...prevData];
           if (prevData.length === 1 && prevData[0] === "0") {
@@ -64,6 +67,23 @@ function InputSection() {
         });
       }
     };
+  }
+
+  function generatePrimeNumer(num: number) {
+    const arrNum: Array<number> = [];
+    const isPrime = (num: number) => {
+      for (let i = 2; i < num; i++) if (num % i === 0) return false;
+      return num > 1;
+    };
+
+    let i = 0;
+    while (arrNum.length !== num) {
+      if (isPrime(i)) arrNum.push(i);
+
+      i += 1;
+    }
+
+    setData([arrNum.join(", ")]);
   }
 
   return (
@@ -93,6 +113,7 @@ function InputSection() {
           key={i}
           onClick={onClickNumber(code.toString())}
           className="w-1/4 p-2 flex items-center justify-center"
+          disabled={disabledBtn(code)}
         >
           <div className="text-white text-center text-lg font-bold">{code}</div>
         </button>

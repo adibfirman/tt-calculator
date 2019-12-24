@@ -9,3 +9,8 @@
 .pb-percent-50 {
   padding-bottom: 50%;
 }
+
+*:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
