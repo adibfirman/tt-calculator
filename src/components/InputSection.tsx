@@ -11,12 +11,14 @@ function InputSection() {
   const disabledBtn = useCallback(
     code => {
       if (typeInput === EInputType.fibonacci || typeInput === EInputType.prime) {
+        const val = data[0] || "";
         if (code === "*" || code === "+" || code === ".") return true;
+        if (val.search(/,/g) !== -1 && code !== "C") return true;
       }
 
       return false;
     },
-    [typeInput]
+    [data, typeInput]
   );
   const classNameBtn = useCallback(
     (rule: EInputType) => {
