@@ -57,7 +57,9 @@ function InputSection() {
         const result = calculate(removeComma.join(""));
 
         if (typeInput === EInputType.prime) generatePrimeNumer(parseInt(result));
-        else setData([result.toLocaleString()]);
+        else if (typeInput === EInputType.fibonacci) {
+          generateFibonacciNumber(parseInt(result));
+        } else setData([result.toLocaleString()]);
       } else {
         const copyData = [...data];
         if (copyData.length === 1 && copyData[0] === "0") {
@@ -84,6 +86,23 @@ function InputSection() {
     }
 
     setData([arrNum.join(", ")]);
+  }
+
+  function generateFibonacciNumber(num: number) {
+    function generateNum(n: number): number[] {
+      if (n === 1) return [0, 1];
+      else {
+        const res = generateNum(n - 1);
+        res.push(res[res.length - 1] + res[res.length - 2]);
+
+        return res;
+      }
+    }
+
+    const nums = generateNum(num);
+    nums.pop();
+
+    setData([nums.join(", ")]);
   }
 
   return (
