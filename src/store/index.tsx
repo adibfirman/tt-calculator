@@ -1,22 +1,22 @@
 import React, { createContext, useState, useContext } from "react";
 
+type TData = string[] | [];
+
 export enum EInputType {
   default,
   prime,
   fibonacci
 }
 
-export type TData = Array<String>;
-
 interface IValueContext {
   data: TData;
-  setData: Function;
+  setData: (arr: TData) => void;
 }
 
 const Context = createContext<IValueContext | null>(null);
 
 export function Provider({ children }: React.PropsWithChildren<{}>) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<TData>([]);
 
   return <Context.Provider value={{ data, setData }}>{children}</Context.Provider>;
 }

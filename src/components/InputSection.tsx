@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import cs from "classnames";
 
-import { EInputType, TData, useStore } from "../store";
+import { EInputType, useStore } from "../store";
 
 const STRUCTURE = [7, 8, 9, "+", 4, 5, 6, "*", 1, 2, 3, "=", 0, "00", ".", "C"];
 
@@ -50,23 +50,21 @@ function InputSection() {
 
   function onClickNumber(code: string) {
     return () => {
-      if (code === "=") {
+      if (code === "C") setData([]);
+      else if (code === "=") {
         const copyData = [...data];
         const removeComma = copyData.map(val => val.replace(/,/gi, ""));
         const result = calculate(removeComma.join(""));
 
         if (typeInput === EInputType.prime) generatePrimeNumer(parseInt(result));
         else setData([result.toLocaleString()]);
-      } else if (code === "C") setData([]);
-      else {
-        setData((prevData: TData) => {
-          const copyData = [...prevData];
-          if (prevData.length === 1 && prevData[0] === "0") {
-            copyData.pop();
-          }
+      } else {
+        const copyData = [...data];
+        if (copyData.length === 1 && copyData[0] === "0") {
+          copyData.pop();
+        }
 
-          return [...copyData, code];
-        });
+        setData([...copyData, code]);
       }
     };
   }
